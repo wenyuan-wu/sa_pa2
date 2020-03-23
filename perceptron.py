@@ -56,6 +56,8 @@ class Perceptron(object):
                 self.w_[0] += update
                 errors += int(update != 0.0)
             self.errors_.append(errors)
+            if sum(self.errors_[-5:]) == 0:
+                break
         return self
 
     def net_input(self, X):
@@ -81,10 +83,10 @@ def main():
     y = np.where(y == 'WAR', -1, 1)
     ppn = Perceptron(eta=0.1, n_iter=30)
     ppn.fit(X, y)
-    # plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
-    # plt.xlabel('Epochs')
-    # plt.ylabel('Number of misclassifications')
-    # plt.show()
+    plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
+    plt.xlabel('Epochs')
+    plt.ylabel('Number of misclassifications')
+    plt.show()
     print(ppn.w_.shape)
     # output_weights(ppn.w_, 'weights_pa2.txt')
 

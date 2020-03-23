@@ -3,20 +3,33 @@
 # Author: Wenyuan Wu, 18746867
 # Date: 22.03.2020
 # Additional Info:
+# Programming assignment 2: Perceptron
+# Code Skeleton inspired by Sebastian Raschka:
+# Python Machine Learning: Machine Learning and Deep Learning with Python, scikit-learn, and TensorFlow 2, 3rd Edition
+# Raschka, S and Mirjalili, V.
+# https://books.google.ch/books?id=sKXIDwAAQBAJ
+# Packt Publishing, 2019
+# 1 more element is added in the weights vector(first one) to represent the bias unit
+# stopping criterion: if each error equals 0 in last 4 epochs, stop fitting.
+# GitHub Repository:
+# https://github.com/wenyuan-wu/sa_pa2
+
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 class Perceptron(object):
-    """Perceptron classifier.
+    """
+    Perceptron classifier.
 
     Parameters
     ------------
     eta : float
     Learning rate (between 0.0 and 1.0)
-    n_iter : int
-    Passes over the training dataset.
+    random_state : int
+    Random number generator seed for random weight initialization.
 
     Attributes
     -----------
@@ -25,12 +38,13 @@ class Perceptron(object):
     errors_ : list
     Number of misclassifications in every epoch.
     """
-    def __init__(self, eta=0.01, n_iter=10):
+    def __init__(self, eta=0.01, random_state=1):
         self.eta = eta
-        self.n_iter = n_iter
+        self.random_state = random_state
 
     def fit(self, X, y):
-        """Fit training data.
+        """
+        Fit training data.
 
         Parameters
         ----------
@@ -45,10 +59,10 @@ class Perceptron(object):
         -------
         self : object
         """
-        self.w_ = np.zeros(1 + X.shape[1])
+        rgen = np.random.RandomState(self.random_state)
+        self.w_ = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1])
         self.errors_ = []
-
-        for _ in range(self.n_iter):
+        while True:
             errors = 0
             for xi, target in zip(X, y):
                 update = self.eta * (target - self.predict(xi))
@@ -56,7 +70,7 @@ class Perceptron(object):
                 self.w_[0] += update
                 errors += int(update != 0.0)
             self.errors_.append(errors)
-            if sum(self.errors_[-5:]) == 0:
+            if sum(self.errors_[-4:]) == 0:
                 break
         return self
 
@@ -81,14 +95,13 @@ def main():
     X = df.iloc[:, :83].values
     y = df.iloc[:, 84].values
     y = np.where(y == 'WAR', -1, 1)
-    ppn = Perceptron(eta=0.1, n_iter=30)
+    ppn = Perceptron(eta=0.1)
     ppn.fit(X, y)
     plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
     plt.xlabel('Epochs')
     plt.ylabel('Number of misclassifications')
     plt.show()
-    print(ppn.w_.shape)
-    # output_weights(ppn.w_, 'weights_pa2.txt')
+    output_weights(ppn.w_, 'weights_pa2.txt')
 
 
 if __name__ == '__main__':

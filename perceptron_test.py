@@ -1,12 +1,5 @@
-#! /usr/bin/python
-# -*- coding: utf-8 -*-
-# Author: Wenyuan Wu, 18746867
-# Date: 22.03.2020
-# Additional Info:
-
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+
 
 class Perceptron(object):
     """Perceptron classifier.
@@ -65,29 +58,3 @@ class Perceptron(object):
     def predict(self, X):
         """Return class label after unit step"""
         return np.where(self.net_input(X) >= 0.0, 1, -1)
-
-
-def output_weights(weights, file_name):
-    with open(file_name, 'w', encoding='utf-8') as outfile:
-        for w in weights:
-            outfile.write(str(w))
-            outfile.write('\n')
-
-
-def main():
-    df = pd.read_csv('pa2_input.txt', sep='\t', index_col=0)
-    X = df.iloc[:, :83].values
-    y = df.iloc[:, 84].values
-    y = np.where(y == 'WAR', -1, 1)
-    ppn = Perceptron(eta=0.1, n_iter=30)
-    ppn.fit(X, y)
-    # plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
-    # plt.xlabel('Epochs')
-    # plt.ylabel('Number of misclassifications')
-    # plt.show()
-    print(ppn.w_.shape)
-    # output_weights(ppn.w_, 'weights_pa2.txt')
-
-
-if __name__ == '__main__':
-    main()

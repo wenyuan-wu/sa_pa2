@@ -78,9 +78,13 @@ class Perceptron(object):
         """Calculate net input"""
         return np.dot(X, self.w_[1:]) + self.w_[0]
 
+    def activation(self, z):
+        """Compute logistic sigmoid activation"""
+        return 1 / (1 + np.exp(-np.clip(z, -250, 250)))
+
     def predict(self, X):
         """Return class label after unit step"""
-        return np.where(self.net_input(X) >= 0.0, 1, -1)
+        return np.where(self.activation(self.net_input(X)) >= 0.5, 1, -1)
 
 
 def output_weights(weights, file_name):
